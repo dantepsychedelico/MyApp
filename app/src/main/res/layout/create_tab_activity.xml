@@ -1,0 +1,47 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/create_tab_activity"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <EditText
+        android:id="@+id/editTextroomname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Room Name:"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/textViewtimebar"
+        android:layout_width="wrap_content"
+        android:hint="drag your timer"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content" />
+
+    <SeekBar
+        android:id="@+id/seekBartimer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:max="800"
+        />
+
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/buttonCreateroom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/textViewtempnumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Temporary Number" />
+
+</LinearLayout>
