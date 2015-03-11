@@ -6,22 +6,23 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-//import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import org.json.JSONException;
-
-import java.io.IOException;
+// import android.os.Handler;
+//import org.json.JSONException;
+//import java.io.IOException;
 
 public class MainActivity extends Activity {
     static public int uid = 0;
+    public FragmentManager fm;
+    public RoomListFragment roomlist;
 //    private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         SharedPreferences mPrefs = getSharedPreferences("label", 0);
         uid = mPrefs.getInt("uid", 0);
 
@@ -36,26 +37,22 @@ public class MainActivity extends Activity {
         }
         cThread.start();
 
-        FragmentManager fm = getFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.activity_main);
-        if ( fragment == null ) {
-            fragment = new RoomListFragment();
-            fm.beginTransaction().add(R.id.activity_main, fragment)
+        fm = getFragmentManager();
+        roomlist = (RoomListFragment)fm.findFragmentById(R.id.activity_main);
+        if ( roomlist == null ) {
+            roomlist = new RoomListFragment();
+            fm.beginTransaction().add(R.id.activity_main, roomlist)
                     .commit();
         }
+    }
 
-//        TabHost tabs = (TabHost)findViewById(android.R.id.tabhost);
-//        tabs.setup();
-//
-//        TabHost.TabSpec spec1 = tabs.newTabSpec("tab1");
-//        spec1.setIndicator("Chat Lists");
-//        spec1.setContent(R.id.tab1);
-//        tabs.addTab(spec1);
-//
-//        TabHost.TabSpec spec2 = tabs.newTabSpec("tab2");
-//        spec2.setIndicator("Create Chat");
-//        spec2.setContent(R.id.tab2);
-//        tabs.addTab(spec2);
+    @Override
+    protected void onActivityResult (int req, int res, Intent data) {
+        if (res == RESULT_OK) {
+            int roomid = data.getIntExtra("new.room", 0);
+            Log.d("**roomid on main**", roomid + "");
+            roomlist.addRoom(roomid);
+        }
     }
 
     @Override
@@ -68,11 +65,12 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
        if (item.getItemId() == R.id.menu_add) {
            Intent i = new Intent(this, CreateTabActivity.class);
-           i.putExtra("hello.world", 7);
            startActivityForResult(i, 0);
+//           startActivity(i);
            return true;
        }else {
            return super.onOptionsItemSelected(item);
        }
     }
+
 }

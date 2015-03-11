@@ -1,6 +1,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/room_list"
+    android:id="@+id/chat_list"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -11,4 +11,3 @@
         android:id="@android:id/list" />
 
 </LinearLayout>
-

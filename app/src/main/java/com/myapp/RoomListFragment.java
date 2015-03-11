@@ -17,13 +17,12 @@ import java.util.ArrayList;
  */
 public class RoomListFragment extends ListFragment {
     private ArrayList<String> rooms = new ArrayList<String>();
+    private ArrayAdapter<String> adapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        for (int i=0; i<20; i++) {
-            rooms.add(i, "room"+i);
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+        adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, rooms);
         setListAdapter(adapter);
     }
@@ -37,7 +36,12 @@ public class RoomListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         Log.d("LOG", (String)(getListAdapter()).getItem(position));
         Intent i = new Intent(getActivity(), RoomActivity.class);
-        i.putExtra("hello.world", (String)(getListAdapter()).getItem(position));
+        i.putExtra("roomid", (String)(getListAdapter()).getItem(position));
         startActivityForResult(i, 0);
+    }
+
+    public void addRoom(int roomid) {
+        Log.d("addRoom", roomid+"");
+        adapter.add("room"+roomid);
     }
 }
