@@ -15,22 +15,16 @@ import android.widget.Button;
  * Created by danteubu on 3/7/15.
  */
 public class CreateTabActivity extends Activity {
-    private Thread cThread;
-    private clientSocket cs;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_tab_activity);
         final Button mCreate = (Button) findViewById(R.id.mCreate);
-        cs = new clientSocket();
-        cs.setActivity(this);
-        cThread = new Thread(cs);
+        Client.getInstance().setCurrentActivity(this);
 
         mCreate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                cs.setReq("method", "newroom");
-                cs.setReq("id", MainActivity.uid);
-                cThread.start();
+                Client.getInstance().setReq("method", "newroom").send();
             }
         });
     }

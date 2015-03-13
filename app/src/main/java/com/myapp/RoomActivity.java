@@ -37,13 +37,9 @@ public class RoomActivity extends Activity {
         final Editable text = inputText.getText();
         bSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                clientSocket cs = new clientSocket();
-                Thread cThread = new Thread(cs);
-                cs.setReq("method", "chat");
-                cs.setReq("id", MainActivity.uid);
-                cs.setReq("room", Integer.parseInt(roomId.replace("room", "")));
-                cs.setReq("text", text.toString());
-                cThread.start();
+                Client.getInstance().setReq("method", "chat")
+                        .setReq("room", Integer.parseInt(roomId.replace("room", "")))
+                        .setReq("text", text.toString()).send();
                 chatlist.addChat(text.toString());
                 text.clear();
             }

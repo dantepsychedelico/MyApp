@@ -1,7 +1,6 @@
 package com.myapp;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,28 +13,24 @@ import android.view.MenuItem;
 //import java.io.IOException;
 
 public class MainActivity extends Activity {
-    static public int uid = 0;
     public FragmentManager fm;
     public RoomListFragment roomlist;
-//    private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         SharedPreferences mPrefs = getSharedPreferences("label", 0);
-        uid = mPrefs.getInt("uid", 0);
+        Client.getInstance().setCurrentActivity(this)
+                .setSharedPreferences(mPrefs)
+                .startup();
 
-        clientSocket cs = new clientSocket();
-        cs.setPrefs(mPrefs);
-        Thread cThread = new Thread(cs);
-        if (uid==0) {
-            cs.setReq("method", "new");
-        } else {
-            cs.setReq("method", "online");
-            cs.setReq("id", uid);
-        }
-        cThread.start();
+//        if (uid == 0) {
+//            Client.getInstance().setReq("method", "new").send();
+//        }else {
+//            Client.getInstance().setReq("method", "online")
+//                    .setReq("id", uid).send();
+//        }
 
         fm = getFragmentManager();
         roomlist = (RoomListFragment)fm.findFragmentById(R.id.activity_main);
@@ -73,4 +68,9 @@ public class MainActivity extends Activity {
        }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Client.getInstance().stop();
+    }
 }
