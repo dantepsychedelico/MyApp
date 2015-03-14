@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +21,7 @@ public class RoomActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Client.getInstance().setCurrentActivity(this);
         setContentView(R.layout.room_activity);
         roomId = getIntent().getStringExtra("roomid");
 
@@ -44,6 +44,5 @@ public class RoomActivity extends Activity {
                 text.clear();
             }
         });
-
     }
 }

@@ -25,7 +25,6 @@ public class Client{
     private DataInputStream input;
     private JSONObject req = new JSONObject();
     private JSONObject res;
-    private Thread sender;
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
     private static final Client client = new Client();
@@ -33,7 +32,7 @@ public class Client{
     private Activity currentActivity;
     private int uid = 0;
     public void send() {
-        sender = new Thread(new Runnable(){
+        Thread thread = new Thread(new Runnable(){
             public void run() {
                 try{
                     setReq("id", uid);
@@ -44,7 +43,7 @@ public class Client{
                 }
             }
         });
-        sender.start();
+        thread.start();
     }
 
     public Client setReq(String key, String value) {
@@ -76,7 +75,7 @@ public class Client{
     }
 
     public void startup() {
-        sender = new Thread(new Runnable(){
+        Thread thread = new Thread(new Runnable(){
             public void run() {
                 try{
                     sock = new Socket("192.168.11.4", 9999);
@@ -89,15 +88,34 @@ public class Client{
                     input = new DataInputStream(sock.getInputStream());
                     while (true) {
                         res = new JSONObject(input.readUTF());
-                        switch (req.getString("method")) {
+                        Log.d("res", res.toString());
+                        switch (res.getString("method")) {
                             case "new":
+                                uid = res.getInt("id");
                                 mEditor.putInt("uid", res.getInt("id")).commit();
                                 break;
                             case "newroom":
+                            case "join":
                                 Intent i = currentActivity.getIntent();
                                 i.putExtra("new.room", res.getInt("room"));
                                 currentActivity.setResult(currentActivity.RESULT_OK, i);
                                 currentActivity.finish();
+                                break;
+                            case "chat":
+                                if (uid != res.getInt("id")) {
+                                    final RoomActivity roomActivity = (RoomActivity)currentActivity;
+                                    roomActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                roomActivity.chatlist.addChat(res.getString("text"));
+                                            } catch (JSONException e) {
+                                            }
+                                        }
+                                    });
+                                }
+                                break;
+                            case "check":
                                 break;
                             default:
                                 break;
@@ -110,7 +128,8 @@ public class Client{
                 }
             }
         });
-        sender.start();
+//        currentActivity.runOnUiThread(thread);
+        thread.start();
     }
     public Client renewReq() {
         this.req = new JSONObject();

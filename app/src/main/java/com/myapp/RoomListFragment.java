@@ -3,7 +3,6 @@ package com.myapp;
 import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,14 +33,12 @@ public class RoomListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Log.d("LOG", (String)(getListAdapter()).getItem(position));
         Intent i = new Intent(getActivity(), RoomActivity.class);
         i.putExtra("roomid", (String)(getListAdapter()).getItem(position));
         startActivityForResult(i, 0);
     }
 
     public void addRoom(int roomid) {
-        Log.d("addRoom", roomid+"");
         adapter.add("room"+roomid);
     }
 }

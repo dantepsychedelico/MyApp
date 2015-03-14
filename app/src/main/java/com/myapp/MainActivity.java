@@ -25,13 +25,6 @@ public class MainActivity extends Activity {
                 .setSharedPreferences(mPrefs)
                 .startup();
 
-//        if (uid == 0) {
-//            Client.getInstance().setReq("method", "new").send();
-//        }else {
-//            Client.getInstance().setReq("method", "online")
-//                    .setReq("id", uid).send();
-//        }
-
         fm = getFragmentManager();
         roomlist = (RoomListFragment)fm.findFragmentById(R.id.activity_main);
         if ( roomlist == null ) {
@@ -45,7 +38,6 @@ public class MainActivity extends Activity {
     protected void onActivityResult (int req, int res, Intent data) {
         if (res == RESULT_OK) {
             int roomid = data.getIntExtra("new.room", 0);
-            Log.d("**roomid on main**", roomid + "");
             roomlist.addRoom(roomid);
         }
     }
@@ -61,7 +53,6 @@ public class MainActivity extends Activity {
        if (item.getItemId() == R.id.menu_add) {
            Intent i = new Intent(this, CreateTabActivity.class);
            startActivityForResult(i, 0);
-//           startActivity(i);
            return true;
        }else {
            return super.onOptionsItemSelected(item);
