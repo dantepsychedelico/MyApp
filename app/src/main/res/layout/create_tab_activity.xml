@@ -16,16 +16,15 @@
     <TextView
         android:id="@+id/textViewtimebar"
         android:layout_width="wrap_content"
-        android:hint="drag your timer"
+        android:text="drag your timer"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content" />
 
-    <SeekBar
-        android:id="@+id/seekBartimer"
-        android:layout_width="fill_parent"
+    <AnalogClock
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:max="800"
-        />
+        android:id="@+id/analogClock"
+        android:layout_gravity="center_horizontal" />
 
     <LinearLayout
         android:layout_gravity="center_horizontal"
@@ -42,6 +41,7 @@
             android:layout_height="wrap_content"
             android:text="Add" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/textViewtempnumber"
         android:layout_width="wrap_content"

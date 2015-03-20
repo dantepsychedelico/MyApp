@@ -15,14 +15,20 @@ import android.view.MenuItem;
 public class MainActivity extends Activity {
     public FragmentManager fm;
     public RoomListFragment roomlist;
+    private sqliteController dbCtrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dbCtrl = new sqliteController(this);
+        dbCtrl.open();
         SharedPreferences mPrefs = getSharedPreferences("label", 0);
-        Client.getInstance().setCurrentActivity(this)
+        Client.getInstance()
+                .setCurrentActivity(this, this.getClass().getName())
+                .clearReq()
                 .setSharedPreferences(mPrefs)
+                .setdbCtrl(dbCtrl)
                 .startup();
 
         fm = getFragmentManager();
@@ -37,8 +43,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult (int req, int res, Intent data) {
         if (res == RESULT_OK) {
-            int roomid = data.getIntExtra("new.room", 0);
-            roomlist.addRoom(roomid);
+            schemaRoom room = new schemaRoom(data.getIntExtra("roomid", 0),
+                    data.getStringExtra("roomname"),
+                    data.getIntExtra("createtime", 0),
+                    data.getIntExtra("alivetime", 0));
+            roomlist.addRoom(room);
         }
     }
 
@@ -63,5 +72,11 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         Client.getInstance().stop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Client.getInstance().setCurrentActivity(this, this.getClass().getName());
     }
 }

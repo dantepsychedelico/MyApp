@@ -12,10 +12,13 @@ import java.util.ArrayList;
 public class ChatListFragment extends ListFragment {
     private ArrayList<String> chats = new ArrayList<String>();
     private ArrayAdapter<String> adapter;
+    private sqliteController dbCtrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dbCtrl = Client.getDbCtrl();
+        chats = (ArrayList) dbCtrl.getMsgs(((RoomActivity)getActivity()).getRoomId());
         adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, chats);
         setListAdapter(adapter);
@@ -26,7 +29,8 @@ public class ChatListFragment extends ListFragment {
         return v;
     }
 
-    public void addChat(String chat) {
-        adapter.add(chat);
+    public void addChat(schemaMsg msg, int roomId) {
+        dbCtrl.addMsg(msg, roomId);
+        adapter.add(msg.toString());
     }
 }

@@ -1,7 +1,6 @@
 package com.myapp;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -12,8 +11,6 @@ import org.json.JSONObject;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
 /**
@@ -30,6 +27,8 @@ public class Client{
     private static final Client client = new Client();
     public static Client getInstance() {return client;}
     private Activity currentActivity;
+    private String activityClass;
+    private static sqliteController dbCtrl;
     private int uid = 0;
     public void send() {
         Thread thread = new Thread(new Runnable(){
@@ -78,7 +77,8 @@ public class Client{
         Thread thread = new Thread(new Runnable(){
             public void run() {
                 try{
-                    sock = new Socket("192.168.11.4", 9999);
+//                    sock = new Socket("122.116.90.83", 30000);
+                    sock = new Socket("192.168.11.4", 30000);
                     uid = mPrefs.getInt("uid", 0);
                     if (uid == 0) {
                         setReq("method", "new").send();
@@ -97,22 +97,36 @@ public class Client{
                             case "newroom":
                             case "join":
                                 Intent i = currentActivity.getIntent();
-                                i.putExtra("new.room", res.getInt("room"));
+                                i.putExtra("roomid", res.getInt("roomid"))
+                                        .putExtra("roomname", res.getString("roomname"))
+                                        .putExtra("createtime", res.getInt("createtime"))
+                                        .putExtra("alivetime", res.getInt("alivetime"));
+                                dbCtrl.roomCreate(res.getInt("roomid"), res.getString("roomname"),
+                                        res.getInt("createtime"), res.getInt("alivetime"));
                                 currentActivity.setResult(currentActivity.RESULT_OK, i);
                                 currentActivity.finish();
                                 break;
                             case "chat":
                                 if (uid != res.getInt("id")) {
-                                    final RoomActivity roomActivity = (RoomActivity)currentActivity;
-                                    roomActivity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                roomActivity.chatlist.addChat(res.getString("text"));
-                                            } catch (JSONException e) {
+                                    if (activityClass.equals("com.myapp.RoomActivity")) {
+                                        final RoomActivity roomActivity = (RoomActivity) currentActivity;
+                                        roomActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    schemaMsg msg = new schemaMsg(res.getInt("id"), res.getString("type"),
+                                                            res.getString("content"), res.getInt("time"));
+                                                    roomActivity.chatlist.addChat(msg, res.getInt("roomid"));
+                                                } catch (JSONException e) {
+                                                    Log.d("JSONException", e.toString());
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
+                                    } else {
+                                        schemaMsg msg = new schemaMsg(res.getInt("id"), res.getString("type"),
+                                                res.getString("content"), res.getInt("time"));
+                                        dbCtrl.addMsg(msg, res.getInt("roomid"));
+                                    }
                                 }
                                 break;
                             case "check":
@@ -128,12 +142,7 @@ public class Client{
                 }
             }
         });
-//        currentActivity.runOnUiThread(thread);
         thread.start();
-    }
-    public Client renewReq() {
-        this.req = new JSONObject();
-        return this;
     }
     public Client setSharedPreferences(SharedPreferences mPrefs) {
         if (this.mPrefs == null) {
@@ -142,8 +151,20 @@ public class Client{
         }
         return this;
     }
-    public Client setCurrentActivity(Activity activity) {
+    public Client setdbCtrl(sqliteController dbCtrl) {
+        this.dbCtrl = dbCtrl;
+        return this;
+    }
+    static public sqliteController getDbCtrl() {
+        return dbCtrl;
+    }
+    public Client setCurrentActivity(Activity activity, String activityClass) {
         this.currentActivity = activity;
+        this.activityClass = activityClass;
+        return this;
+    }
+    public Client clearReq() {
+        req = new JSONObject();
         return this;
     }
     public void stop() {

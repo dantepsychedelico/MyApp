@@ -3,7 +3,6 @@ package com.myapp;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,19 +18,26 @@ public class CreateTabActivity extends Activity {
         final Button mAdd = (Button)findViewById(R.id.mAdd);
         final EditText mAddRoomId = (EditText)findViewById(R.id.editRoomId);
         final Editable text = mAddRoomId.getText();
-        Client.getInstance().setCurrentActivity(this);
 
         mCreate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Client.getInstance().setReq("method", "newroom").send();
+                Client.getInstance()
+                        .clearReq()
+                        .setReq("method", "newroom")
+                        .setReq("alivetime", 1000)
+                        .setReq("roomname", "room")
+                        .send();// settime
             }
         });
         mAdd.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Client.getInstance().setReq("method", "join")
-                        .setReq("room", Integer.parseInt(text.toString())).send();
+                Client.getInstance()
+                        .clearReq()
+                        .setReq("method", "join")
+                        .setReq("roomid", Integer.parseInt(text.toString()))
+                        .send();
                 text.clear();
             }
         });
@@ -43,4 +49,9 @@ public class CreateTabActivity extends Activity {
         setResult(RESULT_CANCELED);
     }
 
+    @Override
+    protected void onStart() {
+        Client.getInstance().setCurrentActivity(this, this.getClass().getName());
+        super.onStart();
+    }
 }

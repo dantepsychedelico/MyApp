@@ -15,13 +15,16 @@ import java.util.ArrayList;
  * Created by danteubu on 3/2/15.
  */
 public class RoomListFragment extends ListFragment {
-    private ArrayList<String> rooms = new ArrayList<String>();
-    private ArrayAdapter<String> adapter;
+    private ArrayList<schemaRoom> rooms;
+    private ArrayAdapter<schemaRoom> adapter;
+    private sqliteController dbCtrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new ArrayAdapter<String>(getActivity(),
+        dbCtrl = new sqliteController(getActivity());
+        rooms = (ArrayList)dbCtrl.getRooms();
+        adapter = new ArrayAdapter<schemaRoom>(getActivity(),
                 android.R.layout.simple_list_item_1, rooms);
         setListAdapter(adapter);
     }
@@ -34,11 +37,11 @@ public class RoomListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Intent i = new Intent(getActivity(), RoomActivity.class);
-        i.putExtra("roomid", (String)(getListAdapter()).getItem(position));
+        i.putExtra("roomid", ((schemaRoom)(getListAdapter()).getItem(position)).getRoomId());
         startActivityForResult(i, 0);
     }
 
-    public void addRoom(int roomid) {
-        adapter.add("room"+roomid);
+    public void addRoom(schemaRoom room) {
+        adapter.add(room);
     }
 }
