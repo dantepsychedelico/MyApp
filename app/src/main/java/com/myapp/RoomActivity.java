@@ -44,7 +44,7 @@ public class RoomActivity extends Activity {
                 Client.getInstance()
                         .clearReq()
                         .setReq("method", "chat")
-                        .setReq("type", "content")
+                        .setReq("mtype", "text")
                         .setReq("roomid", roomId)
                         .setReq("content", text.toString()).send();
                 chatlist.addChat(new schemaMsg(roomId, "content", text.toString(), 0), roomId);

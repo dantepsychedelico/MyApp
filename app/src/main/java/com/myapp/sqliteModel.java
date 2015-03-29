@@ -61,7 +61,7 @@ public class sqliteModel extends SQLiteOpenHelper {
         cv.put("content", msg.getContent());
         cv.put("uid", msg.getUid());
         cv.put("time", msg.getTime());
-        database.insert("msgs", "id", cv);
+        database.insert("msgs", "id", cv);// ignore insert id
     }
     public List<schemaMsg> getMsg(SQLiteDatabase database, int roomId) {
         Cursor cursor = database.query("msgs", msgsCol, "roomid==?", new String[] {Integer.toString(roomId)}, null, null, "time");

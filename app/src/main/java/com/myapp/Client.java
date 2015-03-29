@@ -34,7 +34,7 @@ public class Client{
         Thread thread = new Thread(new Runnable(){
             public void run() {
                 try{
-                    setReq("id", uid);
+                    setReq("uid", uid);
                     output = new DataOutputStream(sock.getOutputStream());
                     output.writeUTF(req.toString());
                 } catch (IOException e) {
@@ -77,13 +77,13 @@ public class Client{
         Thread thread = new Thread(new Runnable(){
             public void run() {
                 try{
-//                    sock = new Socket("122.116.90.83", 30000);
-                    sock = new Socket("192.168.11.4", 30000);
+                    sock = new Socket("122.116.90.83", 30000);
+//                    sock = new Socket("192.168.11.4", 30000);
                     uid = mPrefs.getInt("uid", 0);
                     if (uid == 0) {
                         setReq("method", "new").send();
                     }else {
-                        setReq("method", "online").setReq("id", uid).send();
+                        setReq("method", "online").setReq("uid", uid).send();
                     }
                     input = new DataInputStream(sock.getInputStream());
                     while (true) {
@@ -91,8 +91,8 @@ public class Client{
                         Log.d("res", res.toString());
                         switch (res.getString("method")) {
                             case "new":
-                                uid = res.getInt("id");
-                                mEditor.putInt("uid", res.getInt("id")).commit();
+                                uid = res.getInt("uid");
+                                mEditor.putInt("uid", res.getInt("uid")).commit();
                                 break;
                             case "newroom":
                             case "join":
@@ -107,14 +107,14 @@ public class Client{
                                 currentActivity.finish();
                                 break;
                             case "chat":
-                                if (uid != res.getInt("id")) {
+                                if (uid != res.getInt("uid")) {
                                     if (activityClass.equals("com.myapp.RoomActivity")) {
                                         final RoomActivity roomActivity = (RoomActivity) currentActivity;
                                         roomActivity.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 try {
-                                                    schemaMsg msg = new schemaMsg(res.getInt("id"), res.getString("type"),
+                                                    schemaMsg msg = new schemaMsg(res.getInt("uid"), res.getString("mtype"),
                                                             res.getString("content"), res.getInt("time"));
                                                     roomActivity.chatlist.addChat(msg, res.getInt("roomid"));
                                                 } catch (JSONException e) {
@@ -123,7 +123,7 @@ public class Client{
                                             }
                                         });
                                     } else {
-                                        schemaMsg msg = new schemaMsg(res.getInt("id"), res.getString("type"),
+                                        schemaMsg msg = new schemaMsg(res.getInt("uid"), res.getString("mtype"),
                                                 res.getString("content"), res.getInt("time"));
                                         dbCtrl.addMsg(msg, res.getInt("roomid"));
                                     }
