@@ -97,12 +97,14 @@ public class Client{
                             case "newroom":
                             case "join":
                                 Intent i = currentActivity.getIntent();
+                                int alivetime = 1111;       // bug no set alivetime
+                                String roomname = "newroom";        // bug on set roomname
                                 i.putExtra("roomid", res.getInt("roomid"))
-                                        .putExtra("roomname", res.getString("roomname"))
+                                        .putExtra("roomname", roomname)
                                         .putExtra("createtime", res.getInt("createtime"))
-                                        .putExtra("alivetime", res.getInt("alivetime"));
-                                dbCtrl.roomCreate(res.getInt("roomid"), res.getString("roomname"),
-                                        res.getInt("createtime"), res.getInt("alivetime"));
+                                        .putExtra("alivetime", alivetime);
+                                dbCtrl.roomCreate(res.getInt("roomid"), roomname,
+                                        res.getInt("createtime"), alivetime);
                                 currentActivity.setResult(currentActivity.RESULT_OK, i);
                                 currentActivity.finish();
                                 break;
