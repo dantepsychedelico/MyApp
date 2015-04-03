@@ -1,6 +1,7 @@
 package com.myapp;
 
-import android.app.Activity;
+//import android.app.Activity;
+import android.support.v7.app.ActionBarActivity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +13,7 @@ import android.view.MenuItem;
 //import org.json.JSONException;
 //import java.io.IOException;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
     public FragmentManager fm;
     public RoomListFragment roomlist;
     private sqliteController dbCtrl;
@@ -53,6 +54,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+        Log.d("addMENU", "***");
         getMenuInflater().inflate(R.menu.main_activity_actions, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -71,7 +73,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Client.getInstance().stop();
+        Log.d("main activity stop", "***");
+//        Client.getInstance().stop();
     }
 
     @Override
